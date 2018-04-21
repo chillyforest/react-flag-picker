@@ -1,0 +1,20 @@
+.App {
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+.header-title {
+  text-align: center;
+  font-size: 24px;
+  line-height: 1.1;
+  text-transform: capitalize;
+}
+
+.Wrapper {
+  width: 50%;
+  border-style: solid;
+  border-color: black;
+  border-radius: 5px;
+  min-height: 540px;
+  margin: 35px auto;
+  background-color: #f6f6f6;
+}
