@@ -28,7 +28,7 @@ class FlagPicker extends Component {
     */
     getContinentsFromJSON() {
         let con = [];
-        Data.map(c => {
+        Data.forEach(c => {
             con.push(c.continent);
         });
 
@@ -41,15 +41,11 @@ class FlagPicker extends Component {
     getCountriesFromJSON(continent) {
         let con = [];
         let conWithCode = [];
-        Data.map(c => {
-            if (c.continent === continent) {
-                c.countries
-                    .map(data => {
-                        con.push(data.name);
-                        conWithCode.push(data);
-                    })
-            }
-        });
+        Data.filter(x => x.continent === continent)
+            .forEach(c => c.countries.forEach(data => {
+                con.push(data.name);
+                conWithCode.push(data);
+            }));
 
         this.setState({countries: con, countriesWithCode: conWithCode});
     }
@@ -69,7 +65,7 @@ class FlagPicker extends Component {
     displayFlags(data) {
         let filter = [];
         let dataList = [];
-        data.map(x => {
+        data.forEach (x => {
             dataList.push(x.name);
         })
 
@@ -93,12 +89,12 @@ class FlagPicker extends Component {
 
                 <SearchBox
                     name="country"
-                    disabled={(this.state.countries.length == 0)}
+                    disabled={(this.state.countries.length === 0)}
                     placeholder="Search Country"
                     source={this.state.countries}
                     selectedCheckedList={this.displayFlags}
                     hasCheckboxes={true}/> 
-                    
+
                     {
                         this.state.selectedCountries.map(data => { 
                             return <DisplayFlag countryCode={data.code} countryName={data.name} id={data.code} key={data.code}/>

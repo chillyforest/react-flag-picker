@@ -32,12 +32,11 @@ class SearchBox extends Component {
             if (this.props.source && this.props.source.length > 0) {
                 this.props
                     .source
-                    .map(data => {
-                        (this.props.hasCheckboxes)
-                            ? temp.push({name: data, isChecked: false})
-                            : temp.push({name: data})
-                    })    
-
+                    .forEach(data => {
+                            (this.props.hasCheckboxes)
+                                ? temp.push({name: data, isChecked: false})
+                                : temp.push({name: data})
+                    })
             return {
                 modData: temp
             }
@@ -100,11 +99,8 @@ class SearchBox extends Component {
     checkboxOnSelected(e) {
         let list = this.state.modData;
 
-        list.map(data => {
-            if(data.name.indexOf(e.target.value) >= 0) {
-                data.isChecked = e.target.checked;
-            }
-        })
+        list.filter(x => x.name.indexOf(e.target.value) >= 0)
+            .map(y => y.isChecked = e.target.checked);
 
         this.setState(() => {
             return {
@@ -143,34 +139,20 @@ class SearchBox extends Component {
         This function returns the HTML content for the autocomplete data based on the props hasCheckboxes
     */
     getInputDataContent(data) {
-        if(this.props.hasCheckboxes) {
-            return (
-                <span>
-                    <input checked={data.isChecked} type="checkbox" value={data.name} onChange={(e) => {this.checkboxOnSelected(e)}}/>
-                    {data.name} 
-                </span>
-            )
-        }
-        else {
-            return (
-                <span>
-                    {data.name}
-                </span>
-            )
-        }
+        const contentWithCheckBox = (<span>
+                                <input checked={data.isChecked} 
+                                        type="checkbox" 
+                                        value={data.name} 
+                                        onChange={(e) => {this.checkboxOnSelected(e)}}/>
+                                {data.name}
+                            </span>);
+
+        const content = (<span>{data.name}</span>);
+
+        return (this.props.hasCheckboxes) ? contentWithCheckBox : content;
     }
 
     render() {
-        const autocompleteContent = (this.state.results.map((data, index) => (
-                <div
-                    key={index}
-                    onClick={() => {
-                    this.selectedTextOnClick(data.name)
-                }}>
-                    {this.getInputDataContent(data)}
-                </div>
-            )));
-
         const submitButton = this.props.hasCheckboxes ? (
             <div className="center-align">
                 <input type="submit" onClick={this.selectedCheckedList}/>
@@ -188,8 +170,18 @@ class SearchBox extends Component {
                             ref={input => this.search = input}
                             onChange={this.onInputChange}/>
 
-                        <div className="autocomplete-items">
-                            {autocompleteContent}
+                        <div className="autocomplete-items" >
+                            {
+                                this.state.results.map((data, index) => (
+                                    <div
+                                        key={index}
+                                        onClick={() => {
+                                        this.selectedTextOnClick(data.name)
+                                    }}>
+                                        {this.getInputDataContent(data)}
+                                    </div>
+                                ))
+                            }
                         </div>
                     </div>
                 </div>
