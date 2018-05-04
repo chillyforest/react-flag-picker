@@ -1,109 +1,111 @@
-import React, {Component} from 'react';
-import Data from '../../asset/continents.json';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import DisplayFlag from '../DisplayFlag/DisplayFlag';
 import SearchBox from '../SearchBox/SearchBox';
+import './FlagPicker.css';
+
+import { connect } from 'react-redux';
+import {
+    fetchContinents,
+    fetchCountries,
+    UpdateSelectedContinent,
+    UpdateCountriesToDisplayFlags
+} from '../../actions/flagPickerActions';
 
 class FlagPicker extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            continents: [],
             countries: [],
-            countriesWithCode: [],
+            countriesData: [],
             selectedContinent: "",
-            selectedCountries: []
+            selectedCountries: [],
+            showCountrySection: false
         }
 
         this.selectedContinentText = this.selectedContinentText.bind(this);
-        this.displayFlags = this.displayFlags.bind(this);
+        this.selectedCountriesList = this.selectedCountriesList.bind(this);
     }
 
-    componentDidMount() {
-        this.getContinentsFromJSON();
+    componentWillMount() {
+        this.props.fetchContinents();
     }
 
-    /* 
-        Load the JSON continent information
-    */
-    getContinentsFromJSON() {
-        let con = [];
-        Data.forEach(c => {
-            con.push(c.continent);
-        });
-
-        this.setState({continents: con});
-    }
-
-    /* 
-        Load the JSON country information based on the continent value
-    */
-    getCountriesFromJSON(continent) {
-        let con = [];
-        let conWithCode = [];
-        Data.filter(x => x.continent === continent)
-            .forEach(c => c.countries.forEach(data => {
-                con.push(data.name);
-                conWithCode.push(data);
-            }));
-
-        this.setState({countries: con, countriesWithCode: conWithCode});
-    }
-
-    /* 
+    /*
         This function gets triggered on Selection of Continent in the first Search Box and
         Load the country information from the function getCountriesFromJSON with the continent value
     */
     selectedContinentText(text) {
-        this.setState({selectedContinent: text});
-        this.getCountriesFromJSON(text);
+        this.props.fetchCountries(text);
+        this.props.UpdateSelectedContinent(text);
     }
 
-    /* 
+    /*
         Loads the selected countries to Display the flags
     */
-    displayFlags(data) {
-        let filter = [];
-        let dataList = [];
-        data.forEach (x => {
-            dataList.push(x.name);
-        })
-
-        filter = this
-            .state
-            .countriesWithCode
-            .filter(val => (dataList.indexOf(val.name) >= 0));
-
-        this.setState({selectedCountries: filter});
+   selectedCountriesList(data) {
+        this.props.UpdateCountriesToDisplayFlags(data);
     }
 
     render() {
+        const continentSection = (
+            <SearchBox
+                name="continent"
+                placeholder="Search Continent"
+                source={this.props.continents}
+                selectedTextOnClick={this.selectedContinentText} />
+        );
+
+        const countrySection = (
+            <SearchBox
+                name="country"
+                placeholder="Search Country"
+                source={this.props.countries}
+                selectedCheckedList={this.selectedCountriesList}
+                multiple={true} />
+        );
+
+        const displayFlagSection = (
+            this.props.selectedCountriesToDisplayFlag.map(data => {
+                return <DisplayFlag
+                    countryCode={data.code}
+                    countryName={data.name}
+                    id={data.code}
+                    key={data.code} />
+            })
+        );
+
         return (
-            <div>
-                <SearchBox
-                    name="continent"
-                    disabled={false}
-                    placeholder="Search Continent"
-                    source={this.state.continents}
-                    selectedTextOnClick={this.selectedContinentText}/>
-
-                <SearchBox
-                    name="country"
-                    disabled={(this.state.countries.length === 0)}
-                    placeholder="Search Country"
-                    source={this.state.countries}
-                    selectedCheckedList={this.displayFlags}
-                    hasCheckboxes={true}/> 
-
-                    {
-                        this.state.selectedCountries.map(data => { 
-                            return <DisplayFlag countryCode={data.code} countryName={data.name} id={data.code} key={data.code}/>
-                        })
-                    }
-
+            <div className="flagpicker-container">
+                <div className="section-1">
+                    {continentSection}
+                </div>
+                <div className="section-2">
+                    {this.props.isContinentSelected && countrySection}
+                </div>
+                <div className="section-3">
+                    {displayFlagSection}
+                </div>
             </div>
         )
     }
 }
 
-export default FlagPicker;
+FlagPicker.propTypes = {
+    fetchContinents: PropTypes.func.isRequired,
+    fetchCountries: PropTypes.func,
+    UpdateSelectedContinent: PropTypes.func,
+    continents: PropTypes.array.isRequired,
+    countries: PropTypes.array,
+    isContinentSelected: PropTypes.bool
+}
+
+const mapStateToProps = (state) => ({
+    continents: state.flagPicker.continents,
+    countries: state.flagPicker.countries,
+    isContinentSelected: (state.flagPicker.continents.filter(c => c.isSelected).length > 0),
+    selectedCountriesToDisplayFlag: state.flagPicker.countries.filter(c => c.isSelected)
+});
+
+export default connect(mapStateToProps, { fetchContinents, fetchCountries, UpdateSelectedContinent, UpdateCountriesToDisplayFlags })(FlagPicker);

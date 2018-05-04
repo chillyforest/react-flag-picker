@@ -1,5 +1,12 @@
+@import url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css');
+@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+* {
+  box-sizing: border-box;
+}
+
 .App {
   font-family: 'Roboto Condensed', sans-serif;
+  font-size: 1.2em;
 }
 
 .header-title {
@@ -10,7 +17,7 @@
 }
 
 .Wrapper {
-  width: 50%;
+  width: 90%;
   border-style: solid;
   border-color: black;
   border-radius: 5px;

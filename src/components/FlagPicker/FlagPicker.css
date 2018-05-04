@@ -1,0 +1,25 @@
+.flagpicker-container {
+    width: 100%;
+}
+
+.flagpicker-container .section-1 {
+    width: 20%;
+}
+
+.flagpicker-container .section-2 {
+    width: 40%;
+}
+
+.flagpicker-container .section-3 {
+    width: 40%;
+}
+
+.section-1, 
+.section-2, 
+.section-3 {
+    display: inline-block;
+    float: left;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
