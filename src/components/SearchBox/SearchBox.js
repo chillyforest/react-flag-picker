@@ -21,106 +21,128 @@ class SearchBox extends Component {
         this.itemOnSelection = this.itemOnSelection.bind(this);
         this.manageDropDownOptions = this.setIsDropDownOptions.bind(this);
         this.updateSelectedItem = this.updateSelectedItem.bind(this);
+        this.setWrapperRef = this.setWrapperRef.bind(this);
+        this.handleClickOutside = this.handleClickOutside.bind(this);
+        this.handleRemoveItemOnClick = this.handleRemoveItemOnClick.bind(this);
     }
 
     componentWillReceiveProps(props) {
-        if (this.getIsSelectedItems(props.source).length === 0) {
+        if (this.getIsSelectedItemsFromAList(props.source).length === 0) {
             this.setIsDropDownOptions(false);
         }
     }
 
-    /*
-        This function gets triggered when ever user types in the Search Box
-        if the user input then filter the search
-        else no input then clear the search and keep the autocomplete results empty
-   */
+    componentDidMount = () => document.addEventListener('click', this.handleClickOutside);
+    componentWillUnmount = () => document.removeEventListener('click', this.handleClickOutside);
+
+    /**
+     * Set the wrapper ref
+     */
+    setWrapperRef = (node) => this.wrapperRef = node;
+
+
+    /**
+     * Close the dropdown if clicked on outside of element
+     */
+    handleClickOutside = (event) => {
+        if (this.wrapperRef && !this.wrapperRef.contains(event.target) && this.state.isDropdownExpanded) {
+            this.manageDropDownOptions(false);
+        }
+    }
+
+    /** 
+     *   This function gets triggered when ever user types in the Search Box
+     */
     onInputChange = (e) => {
         e.stopPropagation();
         this.setState({ query: this.search.value });
     }
 
     /*
-        This function filters the results based on the user input in the textbox
-        If the modified data is empty or undefined then load the modified data based on the user inputdata
-
-        filter the data based on the user input
-    */
-    filterSearch = (data) => {
-        return (data &&
-            (data.name.toLowerCase().indexOf(this.state.query.toLowerCase()) >= 0 || data.isSelected)
-        )
-    }
-
-    /*
-        This functions updates the isChecked object value for each entry when a User Checks or Unchecks
-        the checkbox
-    */
-    itemOnSelection(evt) {
+     *   This functions handles and items selected based on props multiple
+     */
+    itemOnSelection = (evt) => {
         evt.stopPropagation();
         (this.props.multiple) ? this.handleMultiSelection(evt) : this.handleSelection(evt, true);
     }
 
-    handleMultiSelection(evt) {
+    /*
+     *   This functions handles the multiple items selected
+     */
+    handleMultiSelection = (evt) => {
         let list = this.props.source;
         let element = evt.target.querySelector("input");
 
-        if (!element) {
-            element = evt.target;
-        } else {
-            element.checked = !element.checked;
-        }
-
+        (!element) ? element = evt.target : element.checked = !element.checked;
         list.filter(x => x.name.indexOf(element.value) >= 0).map(y => y.isSelected = element.checked);
 
-        this.props.selectedCheckedList(list);
+        this.sendSelectedValueToParent(list);
         this.updateSelectedItem(element.value);
     }
 
-    handleSelection(evt) {
-        this.props.selectedTextOnClick(evt.target.textContent);
+    /*
+     *   This functions handles the item selected
+     */
+    handleSelection = (evt) => {
+        this.sendSelectedValueToParent(evt.target.textContent);
         this.updateSelectedItem(evt.target.textContent);
         this.setIsDropDownOptions(!this.state.isDropdownExpanded);
     }
 
     /*
-        Clears the Autocomplete dropdown search box
-    */
-    clearFilteredSearch() {
-        this.search.value = "";
-        this.setState({ query: this.search.value });
-    }
-
-    handleRemoveItemOnClick(evt, item) {
+     *   This functions handles when an selected items are removed on clicking the (x) symbol
+     */
+    handleRemoveItemOnClick = (evt, item) => {
         evt.stopPropagation();
 
         let list = this.props.source;
         list.filter(x => x.name.indexOf(item) >= 0).map(y => y.isSelected = false);
 
-        this.props.UpdateCountriesToDisplayFlags(list);
+        this.sendSelectedValueToParent(list);
+        this.updateSelectedItem();
 
-        if (this.getIsSelectedItems(list).length === 0) {
+        if (this.getIsSelectedItemsFromAList(list).length === 0) {
             this.setIsDropDownOptions(false);
         }
-
-        this.updateSelectedItem();
     }
 
-    updateSelectedItem(item) {
-        this.setState({ selectedItem: item });
-    }
+    /*
+     *  Utility function send the selected data to the parent based on props multiple
+     *  If multiple then send the Selected List
+     *  
+     */
+    sendSelectedValueToParent = (data) => (this.props.multiple)
+        ? this.props.selectedCheckedList(data)
+        : this.props.selectedTextOnClick(data);
 
-    setIsDropDownOptions(value) {
-        this.setState((prevState) => ({
-            isDropdownExpanded: value
-        }), () => this.clearFilteredSearch());
-    }
 
-    getIsSelectedItems(list) {
-        return (list && list.filter(data => data.isSelected)) || [];
-    }
+    /*
+     *   Clears the Autocomplete dropdown search box
+     */
+    clearFilteredSearch = () => this.setState({ query: "" }, () => this.search.value = "");
+
+    /*
+     *   Utility funtion to update the State Variable SelectedItem
+     */
+    updateSelectedItem = (item) => this.setState({ selectedItem: item });
+
+    /*
+     *   Utility funtion to update the State Variable isDropdownExpanded
+     */
+    setIsDropDownOptions = (value) => this.setState({ isDropdownExpanded: value }, () => this.clearFilteredSearch());
+
+    /*
+     *   Utility funtion to return the filtered list of isSelected = true
+     */
+    getIsSelectedItemsFromAList = (list) => (list && list.filter(data => data.isSelected)) || [];
+
+    /*
+     *   Utility funtion to return the filtered list of based on the user typehead in the Search box
+     */
+    filterSearch = (data) => (data && (data.isSelected || data.name.toLowerCase().indexOf(this.state.query.toLowerCase()) >= 0));
 
     render() {
-        const selectedItems = this.getIsSelectedItems(this.props.source);
+        const selectedItems = this.getIsSelectedItemsFromAList(this.props.source);
         const isAnyItemSelected = (selectedItems && selectedItems.length > 0);
 
         const selectBox = (isAnyItemSelected) ?
@@ -166,7 +188,7 @@ class SearchBox extends Component {
         );
 
         return (
-            <div className="search-box">
+            <div className="search-box" ref={this.setWrapperRef}>
                 <div className="dropdown-container" onClick={() => this.setIsDropDownOptions(!this.state.isDropdownExpanded)}>
                     <div className="dropdown-button">
                         <div className={`dropdown-item ${(isAnyItemSelected) ? "selected-item" : ""}`}>

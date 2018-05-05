@@ -105,7 +105,10 @@
     border: 1px solid #d4d4d4;
     list-style-type: none;
     padding: 0px;
-    text-align: center;
+}
+
+.dropdown-list-items span {
+    padding: 15px;
 }
 
 .dropdown-list-items li {

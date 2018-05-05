@@ -1,4 +1,5 @@
 import SourceData from '../asset/continents.json';
+import { createContinentsList, createCountriesList } from './Util';
 import {
     FETCH_CONTINENTS_DATA,
     FETCH_COUNTRIES_DATA,
@@ -6,45 +7,22 @@ import {
     UPDATE_COUNTRIES_TO_DISPLAY_FLAGS
 } from './types';
 
-export const fetchContinents = () => dispatch => {
-    let continents = SourceData.map(c => {
-        return { "name": c.continent, "isSelected": false }
-    });
+export const fetchContinents = () => dispatch => dispatch({
+    type: FETCH_CONTINENTS_DATA,
+    payload: createContinentsList(SourceData)
+});
 
-    return dispatch({
-        type: FETCH_CONTINENTS_DATA,
-        payload: continents
-    });
-};
+export const fetchCountries = (selectedContinent) => dispatch => dispatch({
+    type: FETCH_COUNTRIES_DATA,
+    payload: createCountriesList(SourceData, selectedContinent)
+});
 
-export const fetchCountries = (selectedContinent) => dispatch => {
-    let countries = [];
+export const UpdateSelectedContinent = (continent) => dispatch => dispatch({
+    type: UPDATE_SELECTED_CONTINENT,
+    payload: continent || ""
+});
 
-    SourceData.filter(x => x.continent === selectedContinent)
-        .map(data => {
-            return data.countries
-                .map((c) => {
-                    c["isSelected"] = false;
-                    return countries.push(c);
-                })
-        });
-
-    return dispatch({
-        type: FETCH_COUNTRIES_DATA,
-        payload: countries
-    });
-};
-
-export const UpdateSelectedContinent = (selectedContinent) => dispatch => {
-    return dispatch({
-        type: UPDATE_SELECTED_CONTINENT,
-        payload: (selectedContinent) ? selectedContinent : ""
-    });
-};
-
-export const UpdateCountriesToDisplayFlags = (countriesData) => dispatch => {
-    return dispatch({
-        type: UPDATE_COUNTRIES_TO_DISPLAY_FLAGS,
-        payload: countriesData
-    });
-};
+export const UpdateCountriesToDisplayFlags = (countriesData) => dispatch => dispatch({
+    type: UPDATE_COUNTRIES_TO_DISPLAY_FLAGS,
+    payload: countriesData
+});
