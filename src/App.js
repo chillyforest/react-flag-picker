@@ -1,24 +1,24 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import FlagPicker from './components/FlagPicker/FlagPicker';
-import './App.css';
-import { Provider } from 'react-redux';
+import { AppContainer } from 'react-hot-loader';
 import store from './store/store';
+import AppStyle from './App.css';
 
-class App extends Component {
-  render() {
-    return (
-      <Provider store={store}>
-        <div className="App">
-          <div className="Wrapper">
-            <div className="header-title">
-              <h1>Flag Picker</h1>
-            </div>
-            <FlagPicker />
-          </div>
-        </div>
-      </Provider>
-    );
-  }
-}
+const render = (Component) => {
+  ReactDOM.render(
+      <AppContainer>
+        <Component store={store} />
+      </AppContainer>,
+    document.getElementById('app')
+  );
+};
 
-export default App;
+render(FlagPicker);
+
+// Hot Module Replacement API
+if (module.hot) {
+  module.hot.accept('./components/FlagPicker/FlagPicker', () => {
+    render(FlagPicker)
+  });
+} 

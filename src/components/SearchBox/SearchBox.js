@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { UpdateCountriesToDisplayFlags } from '../../actions/flagPickerActions';
 
-import './SearchBox.css';
+import SearchBoxStyle from './SearchBox.css';
 
 class SearchBox extends Component {
     constructor(props) {
@@ -114,7 +114,6 @@ class SearchBox extends Component {
     sendSelectedValueToParent = (data) => (this.props.multiple)
         ? this.props.selectedCheckedList(data)
         : this.props.selectedTextOnClick(data);
-
 
     /*
      *   Clears the Autocomplete dropdown search box

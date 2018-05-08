@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { Provider } from 'react-redux';
+
 import PropTypes from 'prop-types';
 import DisplayFlag from '../DisplayFlag/DisplayFlag';
 import SearchBox from '../SearchBox/SearchBox';
-import './FlagPicker.css';
+import FlagPickerStyle from './FlagPicker.css';
 
 import { connect } from 'react-redux';
 import {
@@ -44,7 +46,7 @@ class FlagPicker extends Component {
     /*
         Loads the selected countries to Display the flags
     */
-   selectedCountriesList(data) {
+    selectedCountriesList(data) {
         this.props.UpdateCountriesToDisplayFlags(data);
     }
 
@@ -77,17 +79,26 @@ class FlagPicker extends Component {
         );
 
         return (
-            <div className="flagpicker-container">
-                <div className="section-1">
-                    {continentSection}
+            <Provider store={this.props.store}>
+                <div className="App">
+                    <div className="Wrapper">
+                        <div className="header-title">
+                            <h1>Flag Picker</h1>
+                        </div>
+                        <div className="flagpicker-container">
+                            <div className="section-1">
+                                {continentSection}
+                            </div>
+                            <div className="section-2">
+                                {this.props.isContinentSelected && countrySection}
+                            </div>
+                            <div className="section-3">
+                                {displayFlagSection}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className="section-2">
-                    {this.props.isContinentSelected && countrySection}
-                </div>
-                <div className="section-3">
-                    {displayFlagSection}
-                </div>
-            </div>
+            </Provider>
         )
     }
 }
