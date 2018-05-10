@@ -1,23 +1,26 @@
-const path = require('path')
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+import path from 'path';
+import webpack from 'webpack';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 module.exports = {
     entry: [
+        'babel-polyfill',
         'react-hot-loader/patch',
         'webpack-dev-server/client?http://localhost:3000',
         'webpack/hot/only-dev-server',
-        './src/app.js'
+        './src/app.js',
+        './src/app.css'
     ],
-    mode: 'development',
+    mode: "development",
     output: {
         filename: "bundle.js",
         path: path.resolve(__dirname, 'dist'),
         publicPath: '/'
     },
     plugins: [
-        new HtmlWebpackPlugin({ template: "./src/index.html", filename: "./index.html" }),
+        new HtmlWebpackPlugin({ template: "./src/index.html", filename: "index.html" }),
+        new ExtractTextPlugin({ filename: "style.css" }),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NamedModulesPlugin()
     ],
@@ -32,10 +35,10 @@ module.exports = {
             }
         }, {
             test: /\.css$/,
-            use: [
-                { loader: 'style-loader' },
-                { loader: 'css-loader' }
-              ]
+            use: ExtractTextPlugin.extract({
+                fallback: 'style-loader',
+                use: 'css-loader'
+            })
         }]
     },
     devtool: "source-map",

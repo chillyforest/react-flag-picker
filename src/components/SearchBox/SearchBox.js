@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
 import { connect } from 'react-redux';
-import { UpdateCountriesToDisplayFlags } from '../../actions/flagPickerActions';
-
-import SearchBoxStyle from './SearchBox.css';
+import './SearchBox.css';
 
 class SearchBox extends Component {
     constructor(props) {
@@ -25,14 +22,9 @@ class SearchBox extends Component {
         this.handleClickOutside = this.handleClickOutside.bind(this);
         this.handleRemoveItemOnClick = this.handleRemoveItemOnClick.bind(this);
     }
-
-    componentWillReceiveProps(props) {
-        if (this.getIsSelectedItemsFromAList(props.source).length === 0) {
-            this.setIsDropDownOptions(false);
-        }
-    }
-
+    
     componentDidMount = () => document.addEventListener('click', this.handleClickOutside);
+
     componentWillUnmount = () => document.removeEventListener('click', this.handleClickOutside);
 
     /**
@@ -63,7 +55,7 @@ class SearchBox extends Component {
      */
     itemOnSelection = (evt) => {
         evt.stopPropagation();
-        (this.props.multiple) ? this.handleMultiSelection(evt) : this.handleSelection(evt, true);
+        (this.props.multiple) ? this.handleMultiSelection(evt) : this.handleSelection(evt);
     }
 
     /*
@@ -98,7 +90,7 @@ class SearchBox extends Component {
         let list = this.props.source;
         list.filter(x => x.name.indexOf(item) >= 0).map(y => y.isSelected = false);
 
-        this.sendSelectedValueToParent(list);
+        this.sendSelectedValueToParent(list, true);
         this.updateSelectedItem();
 
         if (this.getIsSelectedItemsFromAList(list).length === 0) {
@@ -109,11 +101,13 @@ class SearchBox extends Component {
     /*
      *  Utility function send the selected data to the parent based on props multiple
      *  If multiple then send the Selected List
-     *  
+     *  else send the selected text and 
+     *      if the item is checked then Unselected = false
+     *      else if the item is unchecked then Unselected = true
      */
-    sendSelectedValueToParent = (data) => (this.props.multiple)
+    sendSelectedValueToParent = (data, isUnSelected = false) => (this.props.multiple)
         ? this.props.selectedCheckedList(data)
-        : this.props.selectedTextOnClick(data);
+        : this.props.selectedTextOnClick(data, isUnSelected);
 
     /*
      *   Clears the Autocomplete dropdown search box
@@ -140,6 +134,9 @@ class SearchBox extends Component {
      */
     filterSearch = (data) => (data && (data.isSelected || data.name.toLowerCase().indexOf(this.state.query.toLowerCase()) >= 0));
 
+    /*
+     *   Render function
+     */
     render() {
         const selectedItems = this.getIsSelectedItemsFromAList(this.props.source);
         const isAnyItemSelected = (selectedItems && selectedItems.length > 0);
@@ -223,4 +220,4 @@ SearchBox.propTypes = {
     source: PropTypes.array
 }
 
-export default connect(null, { UpdateCountriesToDisplayFlags })(SearchBox);
+export default connect(null, {})(SearchBox);

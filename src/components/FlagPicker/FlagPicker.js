@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import DisplayFlag from '../DisplayFlag/DisplayFlag';
 import SearchBox from '../SearchBox/SearchBox';
-import FlagPickerStyle from './FlagPicker.css';
+import './FlagPicker.css';
 
-import { connect } from 'react-redux';
 import {
     fetchContinents,
     fetchCountries,
@@ -38,9 +37,9 @@ class FlagPicker extends Component {
         This function gets triggered on Selection of Continent in the first Search Box and
         Load the country information from the function getCountriesFromJSON with the continent value
     */
-    selectedContinentText(text) {
+    selectedContinentText(text, ...args) {
         this.props.fetchCountries(text);
-        this.props.UpdateSelectedContinent(text);
+        this.props.UpdateSelectedContinent(text, args[0] || false);
     }
 
     /*

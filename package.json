@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build": "./node_modules/.bin/webpack",
-    "build:prod": "./node_modules/.bin/webpack -p",
+    "build:prod": "./node_modules/.bin/webpack --mode production",
     "dev": "./node_modules/.bin/webpack-dev-server --content-base=dist",
     "start": "npm run build && npm run dev",
     "test": "mocha \"test/**/*.spec.js\" --recursive --compilers js:babel-core/register --no-deprecation",

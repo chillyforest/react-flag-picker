@@ -1,2 +1,3 @@
-
-}
+@import './components/DisplayFlag/DisplayFlag.css';
+@import './components/FlagPicker/FlagPicker.css';
+@import './components/SearchBox/SearchBox.css';
