@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import './SearchBox.css';
+import '../style/sass/3-modules/_searchBox.sass';
 
 class SearchBox extends Component {
     constructor(props) {
@@ -145,7 +145,7 @@ class SearchBox extends Component {
             (selectedItems && selectedItems.map((data, index) => (
                 <div className="dropdown-label" key={index}>
                     {data.name}
-                    <i className="fa fa-close"
+                    <i className="icon fa fa-close"
                         onClick={(evt) => this.handleRemoveItemOnClick(evt, data.name)}></i>
                 </div>
             ))) : (<div className="dropdown-label">{"Select"}</div>);
@@ -187,10 +187,10 @@ class SearchBox extends Component {
             <div className="search-box" ref={this.setWrapperRef}>
                 <div className="dropdown-container" onClick={() => this.setIsDropDownOptions(!this.state.isDropdownExpanded)}>
                     <div className="dropdown-button">
-                        <div className={`dropdown-item ${(isAnyItemSelected) ? "selected-item" : ""}`}>
+                        <div className={`dropdown-autocomplete-item ${(isAnyItemSelected) ? "selected-item" : ""}`}>
                             {selectBox}
                         </div>
-                        <i className="fa fa-chevron-circle-down"></i>
+                        <i className="icon fa fa-chevron-circle-down"></i>
                     </div>
                     <div className={`dropdown-list ${(!this.state.isDropdownExpanded) ? "toggle" : ""} `}>
                         {searchBox}

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import FlagPicker from './components/FlagPicker/FlagPicker';
+import FlagPicker from './components/FlagPicker';
 import { AppContainer } from 'react-hot-loader';
 import store from './store/store';
-import './App.css';
+import './style/sass/app.sass';
 
 const render = (Component) => {
   ReactDOM.render(
@@ -18,5 +18,5 @@ render(FlagPicker);
 
 // Hot Module Replacement API
 module.hot ||
-  module.hot.accept('./components/FlagPicker/FlagPicker',
-    () => render(require('./components/FlagPicker/FlagPicker')));
+  module.hot.accept('./components/FlagPicker',
+    () => render(require('./components/FlagPicker')));

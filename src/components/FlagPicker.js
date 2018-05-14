@@ -2,16 +2,16 @@ import React, { Component } from 'react';
 import { Provider } from 'react-redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import DisplayFlag from '../DisplayFlag/DisplayFlag';
-import SearchBox from '../SearchBox/SearchBox';
-import './FlagPicker.css';
+import DisplayFlag from './DisplayFlag';
+import SearchBox from './SearchBox';
+import '../style/sass/3-modules/_flagPicker.sass';
 
 import {
     fetchContinents,
     fetchCountries,
     UpdateSelectedContinent,
     UpdateCountriesToDisplayFlags
-} from '../../actions/flagPickerActions';
+} from '../actions/flagPickerActions';
 
 class FlagPicker extends Component {
     constructor(props) {

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import DisplayFlagStyle from './DisplayFlag.css'
+import '../style/sass/3-modules/_displayFlag.sass'
 
 class DisplayFlag extends Component {
 

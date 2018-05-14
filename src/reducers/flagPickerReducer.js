@@ -5,11 +5,20 @@ const initialState = {
     countries: []
 }
 
+const getUpdatedContinents = (state, action, __isSelected) => {
+    let _continents = state.continents;
+    
+    _continents.map((c2) => (
+        c2.isSelected = (c2.name === action.payload) ? __isSelected : c2.isSelected
+    ));
+
+    return _continents;
+}
+
 export default function (state = initialState, action) {
     switch (action.type) {
         case ActionTypes.FETCH_CONTINENTS_DATA:
-            return {
-                ...state,
+            return {...state,
                 continents: action.payload || state.continents
             }
         case ActionTypes.FETCH_COUNTRIES_DATA:
@@ -18,21 +27,15 @@ export default function (state = initialState, action) {
                 countries: action.payload || state.countries
             }
         case ActionTypes.UPDATE_CONTINENT_SELECTED: {
-            let _continents = state.continents;
-            _continents.map((c2) => (c2.isSelected = (c2.name === action.payload)));
-
             return {
                 ...state,
-                continents: _continents || state.continents
+                continents: getUpdatedContinents(state, action, true) || state.continents
             }
         }
         case ActionTypes.UPDATE_CONTINENT_UNSELECTED: {
-            let _continents = state.continents;
-            _continents.map((c2) => (c2.isSelected = (c2.name === action.payload ? false : c2.isSelected)));
-
             return {
                 ...state,
-                continents: _continents || state.continents,
+                continents: getUpdatedContinents(state, action, false) || state.continents,
                 countries: []
             }
         }

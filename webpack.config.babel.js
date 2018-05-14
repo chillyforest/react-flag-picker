@@ -10,7 +10,7 @@ module.exports = {
         'webpack-dev-server/client?http://localhost:3000',
         'webpack/hot/only-dev-server',
         './src/app.js',
-        './src/app.css'
+        './src/style/sass/app.sass'
     ],
     mode: "development",
     output: {
@@ -20,7 +20,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({ template: "./src/index.html", filename: "index.html" }),
-        new ExtractTextPlugin({ filename: "style.css" }),
+        new ExtractTextPlugin({ filename: "app.css" }),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NamedModulesPlugin()
     ],
@@ -34,11 +34,26 @@ module.exports = {
                 presets: ["es2015", "react", "env", "stage-0"]
             }
         }, {
-            test: /\.css$/,
+            test: [/\.sass$/, /\.css$/],
             use: ExtractTextPlugin.extract({
                 fallback: 'style-loader',
-                use: 'css-loader'
+                use: ['css-loader', 'sass-loader']
             })
+        }, {
+            test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+            loader: 'file-loader?mimetype=image/svg+xml'
+        }, {
+            test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
+            loader: "file-loader?mimetype=application/font-woff"
+        }, {
+            test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
+            loader: "file-loader?mimetype=application/font-woff"
+        }, {
+            test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+            loader: "file-loader?mimetype=application/octet-stream"
+        }, {
+            test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+            loader: "file-loader"
         }]
     },
     devtool: "source-map",
